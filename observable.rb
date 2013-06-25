@@ -19,7 +19,6 @@ class Observer
       @events[name].each do |e|
         e[1] = [e[1]] unless e[1].class == Array
         args = e[1].map!{|arg| (arg.class == Hash && arg[:var]) ? @parent.instance_variable_get(arg[:var]) : arg }
-        
         if e[1].empty?
           return @parent.instance_variable_get(e[0][:var])
         else
@@ -71,12 +70,13 @@ class Example
     trigger('change')
   end
 
+  def watchman(v)
+    puts "Variable has changed to: #{v}"
+  end
+
 end
 
 ex = Example.new
 ex.add_observer
-ex.bind('change', {:var => "@abc"})
-
-
-
-
+ex.bind('change', 'watchman', {:var => "@abc"})
+ex.incr
